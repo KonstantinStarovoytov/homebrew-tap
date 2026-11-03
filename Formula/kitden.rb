@@ -12,6 +12,8 @@ class Kitden < Formula
   depends_on "openssl@3"
   depends_on "python@3.13"
 
+  uses_from_macos "libffi"
+
   resource "annotated-types" do
     url "https://files.pythonhosted.org/packages/5f/56/a8120250d128bed162cd73c76d45f6ef9991f3e068f62a8ee060afa3104a/annotated_types-0.8.0.tar.gz"
     sha256 "13b2beaad985e05e2d6407ee4c4f35590b11f8d693a258a561055cac8f64cab7"
