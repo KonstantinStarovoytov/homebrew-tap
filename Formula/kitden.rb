@@ -7,6 +7,12 @@ class Kitden < Formula
   sha256 "73578da74ea223eee6c9f5025fae033e2460136500f6ddd418dd1ee228b6c4e8"
   license "Apache-2.0"
 
+  bottle do
+    root_url "https://github.com/KonstantinStarovoytov/homebrew-tap/releases/download/kitden-0.4.0"
+    sha256 cellar: :any, arm64_tahoe:  "286173c018a8cadef46a27ce775c860e6ea1d2e1ea3a770b5748cdab0474d4b1"
+    sha256 cellar: :any, x86_64_linux: "a49266dab6aa2e6965d2e71d0fb34a124161f665c4fda228a9d7ee572d7ea898"
+  end
+
   depends_on "pkgconf" => :build
   depends_on "rust" => :build
   depends_on "openssl@3"
