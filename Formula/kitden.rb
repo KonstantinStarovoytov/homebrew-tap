@@ -3,8 +3,8 @@ class Kitden < Formula
 
   desc "See and safely change what AI coding clients load on this computer"
   homepage "https://github.com/KonstantinStarovoytov/kitden"
-  url "https://files.pythonhosted.org/packages/e8/3e/76f0cd7ca9ec3fbda12fe3045d4c12c71ec35d588bbb5f5cec6386e783b0/kitden-0.5.0.tar.gz"
-  sha256 "d1930fcdb9d31cbc8b365225f94a2d0dba918eee3289253b406b8745eeaab4fa"
+  url "https://files.pythonhosted.org/packages/9f/03/ea9d421b92fb638a285a3924e30a2bcb94c438ef48299e7386276445fc85/kitden-0.6.0.tar.gz"
+  sha256 "435d212e4214f08fced5938a0da20295a140ac7e2ea7a19ec54a7279d8f85874"
   license "Apache-2.0"
 
   bottle do
