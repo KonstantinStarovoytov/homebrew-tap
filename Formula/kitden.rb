@@ -8,10 +8,9 @@ class Kitden < Formula
   license "Apache-2.0"
 
   bottle do
-    root_url "https://github.com/KonstantinStarovoytov/homebrew-tap/releases/download/kitden-0.7.0"
-    rebuild 1
-    sha256 cellar: :any, arm64_tahoe:  "f075c7d7421aeb3bede7a2f3f648999abbf59734300dd85124095d7b50ad0e55"
-    sha256 cellar: :any, x86_64_linux: "62e40d0d4a632122f8751362a08cdf20bae8f899c3d2ab5679a5793945358fe5"
+    root_url "https://github.com/KonstantinStarovoytov/homebrew-tap/releases/download/kitden-0.7.1"
+    sha256 cellar: :any, arm64_tahoe:  "8ad1731de51214cd56376aab27757d2cac972cbd8ae9e15ca289392edfc2ef3c"
+    sha256 cellar: :any, x86_64_linux: "3dcea7727bac5816af2498d9548680aa664fc7ba552f9333e9e6c9ecbad8991a"
   end
 
   depends_on "pkgconf" => :build
