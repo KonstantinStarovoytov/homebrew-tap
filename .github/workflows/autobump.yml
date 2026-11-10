@@ -27,6 +27,12 @@ jobs:
       - name: Set up Homebrew
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@63a2d4d8d4193eab3e62b1b782ff3ab8408f5b29 # 2026.11.09.1
+        with:
+          # brew bump reads formulae from the local homebrew/core, not the API
+          core: true
+
+      - name: Install Python for resource updates
+        run: brew install python@3.13
 
       - name: Set up git
         id: git_setup
