@@ -176,5 +176,6 @@ class Kitden < Formula
 
   test do
     assert_match version.to_s, shell_output("#{bin}/kitden --version")
+    assert_match "usage: kitden", shell_output("#{bin}/kitden --help")
   end
 end
