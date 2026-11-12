@@ -1,0 +1,13 @@
+# brew style runs actionlint with this file when the tap has one (Homebrew's style.rb).
+self-hosted-runner:
+  labels: []
+# The repository variables the workflows read; anything else is a typo.
+config-variables:
+  - BREW_COMMIT_CLIENT_ID
+  - RELEASE_APP_BOT
+  - TAP_APP_BOT
+  - TAP_APP_CLIENT_ID
+paths:
+  "**/.github/workflows/tests.yml":
+    ignore:
+      - unknown permission scope "code-quality"
