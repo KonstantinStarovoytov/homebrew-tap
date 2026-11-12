@@ -6,11 +6,15 @@
 # skipped silently. After that, any failed check turns this run red on purpose, for example
 # when a bump pull request was superseded by a newer commit or a newer version.
 #
-# One-time setup by the tap owner:
-#   - install the Kitden release app on this repository
-#   - variable RELEASE_APP_CLIENT_ID: the release app's client ID
-#   - variable RELEASE_APP_BOT: the app's bot login, for example kitden-release[bot]
-#   - secret RELEASE_APP_PRIVATE_KEY: the app's private key
+# Trusted authors of a bump pull request: github-actions[bot], the tap app (autobump.yml)
+# and the Kitden release app (Kitden's publish job opens its pull request from Kitden's own
+# repository, so this tap never holds the release app's key).
+#
+# One-time setup by the tap owner (autobump.yml uses the first and the last):
+#   - variable TAP_APP_CLIENT_ID: the tap app's client ID (kitden-tap-bump)
+#   - variable TAP_APP_BOT: the tap app's bot login, for example kitden-tap-bump[bot]
+#   - variable RELEASE_APP_BOT: the release app's bot login, for example kitden-release[bot]
+#   - secret TAP_APP_PRIVATE_KEY: the tap app's private key
 name: auto-pull
 
 on:
@@ -57,6 +61,7 @@ jobs:
           RUN_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
           RUN_HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
           RELEASE_APP_BOT: ${{ vars.RELEASE_APP_BOT }}
+          TAP_APP_BOT: ${{ vars.TAP_APP_BOT }}
         run: |
           # The job condition already matched bump-kitden-*, so a failed check below is
           # an error the owner should see, not a silent skip.
@@ -81,9 +86,11 @@ jobs:
           version="${BASH_REMATCH[1]}"
           [[ "$head_sha" == "$RUN_HEAD_SHA" ]] \
             || fail "Pull request #$number moved on after the tested commit; the new commit must pass tests first."
-          if [[ "$author" != "github-actions[bot]" && ( -z "$RELEASE_APP_BOT" || "$author" != "$RELEASE_APP_BOT" ) ]]; then
-            fail "Pull request #$number was opened by $author, which is not a trusted bot."
-          fi
+          trusted=false
+          for bot in "github-actions[bot]" "$RELEASE_APP_BOT" "$TAP_APP_BOT"; do
+            if [[ -n "$bot" && "$author" == "$bot" ]]; then trusted=true; fi
+          done
+          [[ "$trusted" == true ]] || fail "Pull request #$number was opened by $author, which is not a trusted bot."
           files="$(gh api --paginate "repos/$GH_REPO/pulls/$number/files" --jq '.[] | "\(.filename) \(.status)"')"
           [[ "$files" == "Formula/kitden.rb modified" ]] \
             || fail "Pull request #$number must modify only Formula/kitden.rb; it changes: ${files//$'\n'/, }"
