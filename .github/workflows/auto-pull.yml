@@ -1,0 +1,127 @@
+# Accepts Kitden version bumps. Once "brew test-bot" passes on a bump pull request, this
+# runs the tap's own "brew pr-pull" workflow (publish.yml) so the bottles are published.
+# Nobody presses the Merge button on a bump: pr-pull pushes the formula and bottles to main.
+#
+# One-time setup by the tap owner:
+#   - install the Kitden release app on this repository
+#   - variable RELEASE_APP_CLIENT_ID: the release app's client ID
+#   - variable RELEASE_APP_BOT: the app's bot login, for example kitden-release[bot]
+#   - secret RELEASE_APP_PRIVATE_KEY: the app's private key
+name: auto-pull
+
+on:
+  # zizmor: ignore[dangerous-triggers] -- never checks out or runs pull request code; it only
+  # reads pull request metadata through the API and dispatches the tap's own publish.yml.
+  workflow_run:
+    workflows: ["brew test-bot"]
+    types: [completed]
+
+permissions: {}
+
+concurrency:
+  group: auto-pull
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash -euo pipefail {0}
+
+jobs:
+  auto-pull:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      startsWith(github.event.workflow_run.head_branch, 'bump-kitden-')
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      actions: write
+      contents: read
+      pull-requests: read
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - name: Check the pull request
+        id: pr
+        env:
+          RUN_PRS: ${{ toJSON(github.event.workflow_run.pull_requests) }}
+          RUN_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          RELEASE_APP_BOT: ${{ vars.RELEASE_APP_BOT }}
+        run: |
+          number="$(jq -r '.[0].number // empty' <<<"$RUN_PRS")"
+          if [[ ! "$number" =~ ^[0-9]+$ ]]; then
+            echo "No pull request on this run, nothing to do."
+            exit 0
+          fi
+
+          pr="$(gh api "repos/$GH_REPO/pulls/$number")"
+          state="$(jq -r '.state' <<<"$pr")"
+          head_repo="$(jq -r '.head.repo.full_name' <<<"$pr")"
+          head_ref="$(jq -r '.head.ref' <<<"$pr")"
+          head_sha="$(jq -r '.head.sha' <<<"$pr")"
+          author="$(jq -r '.user.login' <<<"$pr")"
+
+          if [[ "$state" != "open" ]]; then
+            echo "Pull request #$number is $state, nothing to do."; exit 0
+          fi
+          if [[ "$head_repo" != "$GH_REPO" ]]; then
+            echo "Pull request #$number comes from $head_repo, not this repository."; exit 0
+          fi
+          if [[ ! "$head_ref" =~ ^bump-kitden-[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Branch $head_ref is not a Kitden bump branch."; exit 0
+          fi
+          if [[ "$head_sha" != "$RUN_HEAD_SHA" ]]; then
+            echo "Pull request #$number moved on after the tested commit, nothing to do."; exit 0
+          fi
+          if [[ "$author" != "github-actions[bot]" && ( -z "$RELEASE_APP_BOT" || "$author" != "$RELEASE_APP_BOT" ) ]]; then
+            echo "Pull request #$number was opened by $author, which is not a trusted bot."; exit 0
+          fi
+          files="$(gh api --paginate "repos/$GH_REPO/pulls/$number/files" --jq '.[].filename')"
+          if [[ "$files" != "Formula/kitden.rb" ]]; then
+            echo "Pull request #$number changes more than Formula/kitden.rb."; exit 0
+          fi
+
+          echo "number=$number" >> "$GITHUB_OUTPUT"
+          echo "head_sha=$head_sha" >> "$GITHUB_OUTPUT"
+
+      - name: Publish bottles with pr-pull
+        if: steps.pr.outputs.number != ''
+        env:
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          PR_HEAD_SHA: ${{ steps.pr.outputs.head_sha }}
+        run: |
+          started="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          gh workflow run publish.yml -f "pull_request=$PR_NUMBER" -f "head_sha=$PR_HEAD_SHA"
+
+          run_id=""
+          for _ in $(seq 1 30); do
+            sleep 10
+            run_id="$(gh run list --workflow publish.yml --event workflow_dispatch \
+              --json databaseId,createdAt \
+              --jq "[.[] | select(.createdAt >= \"$started\")] | sort_by(.createdAt) | last | .databaseId // empty")"
+            [[ -n "$run_id" ]] && break
+          done
+          if [[ -z "$run_id" ]]; then
+            echo "::error::The publish.yml run did not start."
+            exit 1
+          fi
+          gh run watch "$run_id" --exit-status
+
+      - name: Check the published bottle
+        if: steps.pr.outputs.number != ''
+        run: |
+          formula="$(gh api -H "Accept: application/vnd.github.raw" \
+            "repos/$GH_REPO/contents/Formula/kitden.rb?ref=main")"
+          version="$(sed -nE 's#^[[:space:]]*url ".*/kitden-([0-9]+\.[0-9]+\.[0-9]+)\.tar\.gz".*#\1#p' <<<"$formula" | head -n 1)"
+          root_url="$(sed -nE 's#^[[:space:]]*root_url "([^"]+)".*#\1#p' <<<"$formula" | head -n 1)"
+          if [[ -z "$version" || -z "$root_url" ]]; then
+            echo "::error::Could not read the version or the bottle root_url from Formula/kitden.rb on main."
+            exit 1
+          fi
+          if [[ "$root_url" != *"/kitden-$version" ]]; then
+            echo "::error::Bottle root_url is $root_url, expected it to end with kitden-$version."
+            exit 1
+          fi
+          echo "Published kitden $version: $root_url"
