@@ -24,7 +24,9 @@ pull request, the `auto-pull` workflow runs `publish.yml` (`brew pr-pull`), whic
 the bottles and pushes the formula to main. It accepts only pull requests from this
 repository, opened by `github-actions[bot]` or the Kitden release app, that change only
 `Formula/kitden.rb`, and it fails unless the published bottle `root_url` ends with
-`kitden-X.Y.Z`.
+`kitden-X.Y.Z`. Once a test run has passed on a `bump-kitden-` pull request, any rejected check
+makes the `auto-pull` run red on purpose. A red run for a bump that a newer commit or version
+superseded is expected; look at the newest bump instead.
 
 One-time setup for the tap owner: install the Kitden release app on this repository, then set
 the variables `RELEASE_APP_CLIENT_ID` and `RELEASE_APP_BOT` (for example `kitden-release[bot]`)

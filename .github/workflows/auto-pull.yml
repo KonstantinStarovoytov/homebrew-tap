@@ -2,6 +2,10 @@
 # runs the tap's own "brew pr-pull" workflow (publish.yml) so the bottles are published.
 # Nobody presses the Merge button on a bump: pr-pull pushes the formula and bottles to main.
 #
+# Runs that are not a passed test of a bump-kitden-* pull request from this repository are
+# skipped silently. After that, any failed check turns this run red on purpose, for example
+# when a bump pull request was superseded by a newer commit or a newer version.
+#
 # One-time setup by the tap owner:
 #   - install the Kitden release app on this repository
 #   - variable RELEASE_APP_CLIENT_ID: the release app's client ID
@@ -28,6 +32,9 @@ defaults:
 
 jobs:
   auto-pull:
+    # These skips are silent on purpose. A failed test run is already red on its own, and
+    # fork or non-pull_request runs must never get a job that holds actions: write. Once a
+    # run passes this condition, every later check fails loudly with ::error::.
     if: >-
       github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.event == 'pull_request' &&
@@ -107,10 +114,14 @@ jobs:
           run_id=""
           for _ in $(seq 1 30); do
             sleep 10
-            run_id="$(comm -13 <(sort <<<"$before") <(list_runs | sort) | sort -n | tail -n 1)"
+            run_id="$(comm -13 <(sort <<<"$before") <(list_runs | sort))"
             [[ -n "$run_id" ]] && break
           done
           [[ -n "$run_id" ]] || { echo "::error::The publish.yml run did not start."; exit 1; }
+          if [[ "$(wc -l <<<"$run_id")" -ne 1 ]]; then
+            echo "::error::Expected one new publish.yml run, found: ${run_id//$'\n'/ }"
+            exit 1
+          fi
           echo "Watching publish.yml run $run_id"
           gh run watch "$run_id" --exit-status
 
