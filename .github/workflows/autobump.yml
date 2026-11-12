@@ -39,7 +39,7 @@ jobs:
         uses: Homebrew/actions/git-user-config@63a2d4d8d4193eab3e62b1b782ff3ab8408f5b29 # 2026.11.09.1
 
       # Pull requests opened with GITHUB_TOKEN start no workflows, so brew test-bot (and
-      # auto-pull after it) would never run. The tap's own app (kitden-tap-bump, installed
+      # auto-pull after it) would never run. The tap's own app (kitden-kettle, installed
       # only on this repository) does start them. It is not the Kitden release app: brew bump
       # runs code from outside this repository, and the release app can tag Kitden, which
       # publishes to PyPI. Without the app variable, fall back to GITHUB_TOKEN as before.

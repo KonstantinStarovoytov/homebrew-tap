@@ -11,9 +11,9 @@
 # repository, so this tap never holds the release app's key).
 #
 # One-time setup by the tap owner (autobump.yml uses the first and the last):
-#   - variable TAP_APP_CLIENT_ID: the tap app's client ID (kitden-tap-bump)
-#   - variable TAP_APP_BOT: the tap app's bot login, for example kitden-tap-bump[bot]
-#   - variable RELEASE_APP_BOT: the release app's bot login, for example kitden-release[bot]
+#   - variable TAP_APP_CLIENT_ID: the tap app's client ID (kitden-kettle)
+#   - variable TAP_APP_BOT: the tap app's bot login, for example kitden-kettle[bot]
+#   - variable RELEASE_APP_BOT: the release app's bot login, for example kitden-beacon[bot]
 #   - secret TAP_APP_PRIVATE_KEY: the tap app's private key
 name: auto-pull
 
