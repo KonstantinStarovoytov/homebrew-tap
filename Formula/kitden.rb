@@ -1,10 +1,10 @@
 class Kitden < Formula
   include Language::Python::Virtualenv
 
-  desc "See and safely change what AI coding clients load on this computer"
+  desc "See and safely change what Claude Code, Codex and Cursor load"
   homepage "https://github.com/KonstantinStarovoytov/kitden"
-  url "https://files.pythonhosted.org/packages/54/a2/a5b7505ab98a4a7d2b792a2c449d490366fa56914eda2efba19141785e06/kitden-0.8.0.tar.gz"
-  sha256 "ddc4a5fed2cf586cd1f86f7916fcd242aa6928ea63b71aaaca35e2c22d5beb70"
+  url "https://files.pythonhosted.org/packages/bd/1a/568c006dd0a85573a9e302576775a5cd6b392863ca0ea865ed3e0d285f21/kitden-0.9.0.tar.gz"
+  sha256 "d6cf3dbd1301f76a21fbeb59c48499916ebbc5acc740d8bacbff2ae1753b4705"
   license "Apache-2.0"
 
   bottle do
