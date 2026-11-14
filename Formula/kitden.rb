@@ -1,10 +1,10 @@
 class Kitden < Formula
   include Language::Python::Virtualenv
 
-  desc "See and safely change what Claude Code, Codex and Cursor load"
+  desc "See what Claude Code, Codex and Cursor load, and which skills got cut"
   homepage "https://github.com/KonstantinStarovoytov/kitden"
-  url "https://files.pythonhosted.org/packages/bd/1a/568c006dd0a85573a9e302576775a5cd6b392863ca0ea865ed3e0d285f21/kitden-0.9.0.tar.gz"
-  sha256 "d6cf3dbd1301f76a21fbeb59c48499916ebbc5acc740d8bacbff2ae1753b4705"
+  url "https://files.pythonhosted.org/packages/0b/f7/84a2f571356ba8f5842ae1b8605f8dcbe43d827be0c747ccfe112d41d2cc/kitden-0.9.1.tar.gz"
+  sha256 "cb64f5e9da8a938d820e9e15ea57f60de5671df6251dcee474e7f47c03f86914"
   license "Apache-2.0"
 
   bottle do
