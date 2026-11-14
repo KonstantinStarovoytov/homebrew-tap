@@ -1,3 +1,7 @@
+# What: every day, checks whether Kitden has a newer version than the formula and, if so, opens
+# a version-bump pull request as the tap app (kitden-kettle).
+# Why: the formula stays up to date even when Kitden's own release did not open the bump.
+#
 # brew tap-new uses this file to generate an autobump workflow for the new tap
 name: brew bump
 

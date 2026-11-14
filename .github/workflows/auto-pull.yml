@@ -1,3 +1,7 @@
+# What: once "brew test-bot" passes on a Kitden version-bump pull request, starts publish.yml,
+# which publishes the formula and the bottles.
+# Why: a new Kitden version reaches Homebrew without anyone pressing the Merge button.
+#
 # Accepts Kitden version bumps. Once "brew test-bot" passes on a bump pull request, this
 # runs the tap's own "brew pr-pull" workflow (publish.yml) so the bottles are published.
 # Nobody presses the Merge button on a bump: pr-pull pushes the formula and bottles to main.
