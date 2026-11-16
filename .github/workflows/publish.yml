@@ -1,7 +1,9 @@
-# What: run for one pull request (auto-pull.yml starts it), "brew pr-pull" takes the bottles
-# that brew test-bot built, attests them and pushes the formula and bottles to main.
-# Why: people who run `brew install kitden` get a ready-built bottle and do not build Kitden
-# from source.
+# What: for one pull request (auto-pull.yml starts it), "brew pr-pull" takes the bottles
+# (ready-built packages) that brew test-bot built and uploads them to a GitHub release. Then
+# the workflow signs a record that the bottles came from this repository and pushes the formula
+# to main.
+# Why: on the systems the bottles are built for (macOS 26 on Apple Silicon, and Linux on
+# x86-64), `brew install` gets a ready-built bottle and does not build Kitden from source.
 #
 # brew tap-new uses this file to generate a bottle publish workflow for the new tap
 name: brew pr-pull

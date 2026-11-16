@@ -1,5 +1,6 @@
-# What: on every pull request and push to main, "brew test-bot" checks the formula and, on a
-# pull request, builds and tests the bottles on macOS and Linux.
+# What: on every pull request and push to main, "brew test-bot" checks the formula and the
+# workflows. On a pull request that changes the formula, it also builds the bottles (ready-built
+# packages) on macOS and Linux, tests them and keeps them for publish.yml.
 # Why: a formula that does not install must fail here, not on a user's computer.
 #
 # brew tap-new uses this file to generate a PR test workflow for the new tap

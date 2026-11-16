@@ -1,10 +1,13 @@
-# What: once "brew test-bot" passes on a Kitden version-bump pull request, starts publish.yml,
-# which publishes the formula and the bottles.
+# What: once "brew test-bot" passes on a Kitden version-bump pull request, checks that a trusted
+# bot opened it, that it changes only the formula and that the tested commit is still its
+# newest. Then it starts publish.yml, which publishes the formula and the bottles (ready-built
+# packages), and checks that the formula on main names the new version and its bottles.
 # Why: a new Kitden version reaches Homebrew without anyone pressing the Merge button.
 #
 # Accepts Kitden version bumps. Once "brew test-bot" passes on a bump pull request, this
 # runs the tap's own "brew pr-pull" workflow (publish.yml) so the bottles are published.
-# Nobody presses the Merge button on a bump: pr-pull pushes the formula and bottles to main.
+# Nobody presses the Merge button on a bump: publish.yml pushes the formula to main and puts
+# the bottles in a GitHub release.
 #
 # Runs that are not a passed test of a bump-kitden-* pull request from this repository are
 # skipped silently. After that, any failed check turns this run red on purpose, for example
