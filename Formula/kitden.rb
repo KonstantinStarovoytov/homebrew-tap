@@ -3,8 +3,8 @@ class Kitden < Formula
 
   desc "See what Claude Code, Codex and Cursor load, and which skills got cut"
   homepage "https://github.com/KonstantinStarovoytov/kitden"
-  url "https://files.pythonhosted.org/packages/a6/a2/ead98446f0ea83bc93e54f07f9d4b46b57a65efb5ebe21360eddecbcbfc9/kitden-0.9.2.tar.gz"
-  sha256 "58631954e6709be2fec18c365a045d2845ea67c188c45306a9ab87715851eaa8"
+  url "https://files.pythonhosted.org/packages/cb/88/5d604592b39326b558146bd876ea315a48259ae6eddf2f9ac6556604cbe6/kitden-0.10.0.tar.gz"
+  sha256 "4fe8fd57ae3943b23f253f8d30812cb115a2233d6cacb193dfd6a6e59ac2d2ff"
   license "Apache-2.0"
 
   bottle do
